@@ -33,7 +33,7 @@ public class MotionSensor {
 
     // scorre la lista e avvisa tutti
     private void notifyObservers(String event) {
-        System.out.println("--- Sensore (" + location + "): invio notifiche a " + observers.size() + " dispositivi... ---");
+        System.out.println("----Sensore (" + location + "): invio notifiche a " + observers.size() + " dispositivi...\n");
         for (SensorObserver o : observers) {
             o.update(event);
         }

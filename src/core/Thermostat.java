@@ -15,12 +15,14 @@ public class Thermostat implements SmartDevice {
 
     @Override
     public void activate() {
-        System.out.println("Thermostat turned ON.");
+        System.out.println("Thermostat turned ON.\n");
+
     }
 
     @Override
     public void deactivate() {
-        System.out.println("Thermostat turned OFF.");
+        System.out.println("Thermostat turned OFF.\n");
+
     }
 
     @Override

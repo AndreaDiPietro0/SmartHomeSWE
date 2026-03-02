@@ -6,6 +6,6 @@ package observer;
  */
 public interface SensorObserver {
 
-    // metodo chiamato dal Subject (sensore) per inviare la notifica
+    // metodo chiamato dal subject (sensore) per inviare la notifica
     void update(String event);
 }
