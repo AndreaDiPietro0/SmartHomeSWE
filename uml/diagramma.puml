@@ -1,0 +1,113 @@
+@startuml
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+
+' Composite e Adapter pattern
+package "Composite & Adapter Patterns" <<Rectangle>> {
+
+    interface SmartDevice {
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+    }
+
+    class LightBulb {
+        - baseConsumption : double
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+    }
+
+    class Thermostat {
+        - baseConsumption : double
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+    }
+
+    class Room {
+        - devices : List<SmartDevice>
+        + addDevice(d: SmartDevice) : void
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+    }
+
+    class House {
+        - areas : List<SmartDevice>
+        + addArea(d: SmartDevice) : void
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+    }
+
+    class BoseSoundSystem {
+        + playMusic() : void
+        + stopMusic() : void
+    }
+
+    class BoseAdapter {
+        - boseSpeakers : BoseSoundSystem
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+    }
+
+    ' Composite relazioni
+    SmartDevice <|.. LightBulb
+    SmartDevice <|.. Thermostat
+    SmartDevice <|.. Room
+    SmartDevice <|.. House
+
+    Room o--> SmartDevice : contains
+    House o--> SmartDevice : contains
+
+    ' Adapter relazioni
+    SmartDevice <|.. BoseAdapter
+    BoseAdapter --> BoseSoundSystem : adapts
+}
+
+' Observer pattern, sistema per notifiche
+package "Observer Pattern" <<Rectangle>> {
+
+    interface SensorObserver {
+        + update(event: String) : void
+    }
+
+    class MobileApp {
+        + update(event: String) : void
+    }
+
+    class AlarmSystem {
+        + update(event: String) : void
+    }
+
+    class SystemLogger {
+        + update(event: String) : void
+    }
+
+    class MotionSensor {
+        - observers : List<SensorObserver>
+        + attach(o: SensorObserver) : void
+        + detach(o: SensorObserver) : void
+        + notifyObservers(event: String) : void
+        + detectIntruder() : void
+    }
+
+    '  relazioni Observer
+    SensorObserver <|.. MobileApp
+    SensorObserver <|.. AlarmSystem
+    SensorObserver <|.. SystemLogger
+
+    MotionSensor o--> SensorObserver : notifies
+}
+
+' note
+note bottom of House : "Root Composite"
+note bottom of Room : "Intermediate Composite"
+note bottom of LightBulb : "Leaf"
+note bottom of BoseAdapter : "Adapter"
+note bottom of BoseSoundSystem : "Adaptee (External Lib)"
+note top of MotionSensor : "Subject (Observable)"
+
+@enduml
