@@ -109,5 +109,17 @@ note bottom of LightBulb : "Leaf"
 note bottom of BoseAdapter : "Adapter"
 note bottom of BoseSoundSystem : "Adaptee (External Lib)"
 note top of MotionSensor : "Subject (Observable)"
+note "«Composite»" as N1
+N1 .. House
+N1 .. Room
+N1 .. SmartDevice
+
+note "«Adapter»" as N2
+N2 .. BoseAdapter
+N2 .. BoseSoundSystem
+
+note "«Observer»" as N3
+N3 .. MotionSensor
+N3 .. SensorObserver
 
 @enduml

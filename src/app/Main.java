@@ -13,7 +13,7 @@ public class Main {
         System.out.println(".\n");
 
         //
-        // TEST COMPOSITE e ADAPTER
+        // Test Composite e Adapter
         //
         System.out.println("1. Configurazione Dispositivi e Stanze");
 
@@ -49,7 +49,7 @@ public class Main {
         System.out.println("\nConsumo totale della casa: " + miaCasa.getConsumption() + " Watt\n");
 
         //
-        // TEST OBSERVER
+        // Test Observer
         //
         System.out.println(".");
         System.out.println("        TEST SISTEMA DI SICUREZZA");
@@ -72,7 +72,7 @@ public class Main {
         sensoreIngresso.detectIntruder();
 
         //
-        // SPEGNIMENTO
+        // Spegnimento
         //
         System.out.println("\n.");
         System.out.println("        SPEGNIMENTO GLOBALE");

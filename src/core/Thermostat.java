@@ -1,8 +1,8 @@
 package core;
 
 /**
- * Componente foglia nel modello composite
- * Rappresenta un singolo termostato smart.
+ * componente foglia nel modello composite
+ * rappresenta un singolo termostato smart.
  */
 public class Thermostat implements SmartDevice {
 

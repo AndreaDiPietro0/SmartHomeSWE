@@ -1,0 +1,25 @@
+
+@startuml
+skinparam ActivityBackgroundColor #EBF5FB
+skinparam ActivityBorderColor #5D6D7E
+skinparam ArrowColor #5D6D7E
+
+start
+:Il sistema chiama activate() su BoseAdapter;
+:L'Adapter intercetta il comando\ndell'interfaccia SmartDevice;
+
+:Traduzione del comando: 'activate()' -> 'playMusic()';
+
+if (BoseSoundSystem è acceso e connesso?) then (Si)
+  :Invocazione esterna:
+  boseSpeakers.playMusic();
+  :Il sistema Bose inizia a suonare;
+  :Ritorna stato di successo al Client;
+else (No)
+  :Gestione dell'eccezione nell'Adapter;
+  :Registra log: "Dispositivo Bose offline";
+  :Ritorna stato di errore al Client;
+endif
+
+stop
+@enduml

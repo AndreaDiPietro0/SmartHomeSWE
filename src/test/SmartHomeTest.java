@@ -3,14 +3,9 @@ package test;
 import core.*;
 import adapter.*;
 import observer.*;
-
-// import libreria JUnit per i test
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Classe di test per testare i design pattern.
- */
 public class SmartHomeTest {
 
     @Test
@@ -54,7 +49,7 @@ public class SmartHomeTest {
         double roomConsumption = entertainmentRoom.getConsumption();
 
         // 3. verifica
-        // il BoseAdapter ha un consumo fisso di 120.0W nel codice. 120 + 5 = 125
+        // il BoseAdapter ha un consumo fisso di 120.0W nel codice, 120 + 5 = 125
         assertEquals(125.0, roomConsumption, "L'adapter non si integra correttamente nel composite");
     }
 

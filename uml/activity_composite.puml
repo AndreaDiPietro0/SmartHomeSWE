@@ -1,0 +1,33 @@
+@startuml
+skinparam ActivityBackgroundColor #FEF9E7
+skinparam ActivityBorderColor #5D6D7E
+skinparam ArrowColor #5D6D7E
+
+start
+:Il Client chiama activate() su House;
+:Recupera la lista delle 'areas';
+
+while (Ci sono ancora aree/stanze?) is (Si)
+  :Estrai il prossimo SmartDevice;
+
+  if (Il dispositivo è un contenitore (Room)?) then (Si)
+    :Entra nel sotto-albero della Stanza;
+    :Recupera la lista dei 'devices' interni;
+
+    while (Ci sono dispositivi nella Room?) is (Si)
+      :Estrai smartDevice (es. Luce, Termostato);
+      :Esegui activate() sulla foglia;
+      :Accensione del componente;
+    endwhile (No)
+
+  else (No)
+    :Esegui activate() sulla foglia;
+    :Accensione del componente;
+  endif
+
+endwhile (No)
+
+:Tutti i nodi dell'albero\nsono stati attraversati;
+:Sistema Smart Home completamente attivo;
+stop
+@enduml

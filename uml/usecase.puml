@@ -1,0 +1,67 @@
+@startuml
+!pragma layout smetana
+left to right direction
+
+skinparam usecase {
+    BackgroundColor<<Gestione>> #FEF9E7
+    BackgroundColor<<Sicurezza>> #E8F8F5
+    BorderColor #5D6D7E
+    ArrowColor #5D6D7E
+}
+skinparam actor {
+    BackgroundColor #F5EEF8
+    BorderColor #5D6D7E
+}
+skinparam rectangle {
+    BorderColor #5D6D7E
+    BackgroundColor White
+}
+
+actor "Utente" as User
+actor "Sensore " as Sensor
+
+rectangle "Smart Home System" {
+
+    package "Area Gestione Dispositivi (Composite & Adapter)" {
+        usecase "Configura casa e stanze" as UC_Config <<Gestione>>
+        usecase "Attiva/disattiva l'intera casa" as UC_Activate <<Gestione>>
+        usecase "Calcola consumo totale" as UC_Consumption <<Gestione>>
+    }
+
+    package "Area Sicurezza e Monitoraggio (Observer)" {
+        usecase "Rileva intrusione" as UC_Detect <<Sicurezza>>
+        usecase "Notifica app Mobile" as UC_NotifyApp <<Sicurezza>>
+        usecase "Attiva sirena" as UC_Siren <<Sicurezza>>
+        usecase "Registra evento" as UC_Log <<Sicurezza>>
+    }
+}
+
+' --- Relazioni con gli Attori ---
+User --> UC_Config
+User --> UC_Activate
+User --> UC_Consumption
+
+Sensor --> UC_Detect
+
+' --- Relazioni Include (Logica Observer) ---
+UC_Detect ..> UC_NotifyApp : <<include>>
+UC_Detect ..> UC_Siren : <<include>>
+UC_Detect ..> UC_Log : <<include>>
+
+' --- Note esplicative per il collegamento ai Pattern ---
+note top of UC_Config
+  tramite il pattern Composite
+  aggiunge room e smartDevice
+end note
+
+note bottom of UC_Activate
+  Attiva in cascata tutti i dispositivi,
+  inclusi gli 'old device' usando l'adapter
+end note
+
+note right of UC_Detect
+  Il Subject (Sensore) scatta
+  e notifica tutti gli Observer
+end note
+
+@enduml

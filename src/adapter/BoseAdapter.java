@@ -1,6 +1,4 @@
 package adapter;
-
-// Importiamo l'interfaccia dal package 'core'
 import core.SmartDevice;
 
 /**
@@ -20,14 +18,12 @@ public class BoseAdapter implements SmartDevice {
     @Override
     public void activate() {
         System.out.println("Adapter: Translating 'activate' to 'playMusic'...");
-        // traduzione
         boseSpeakers.playMusic();
     }
 
     @Override
     public void deactivate() {
         System.out.println("Adapter: Translating 'deactivate' to 'stopMusic'...");
-        // traduzione
         boseSpeakers.stopMusic();
     }
 

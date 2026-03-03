@@ -1,0 +1,17 @@
+@startuml
+start
+:Sensore in standby;
+:Rilevato movimento nella stanza;
+if (Sistema Allarme Attivo?) then (Si)
+  fork
+    :Invia notifica alla mobileApp;
+  fork again
+    :Attiva sirena;
+  fork again
+    :Salva evento su database ;
+  end fork
+else (No)
+  :Ignora evento;
+endif
+stop
+@enduml
