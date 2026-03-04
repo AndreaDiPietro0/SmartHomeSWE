@@ -2,7 +2,7 @@
 !pragma layout smetana
 skinparam classAttributeIconSize 0
 
-' Composite e Adapter pattern
+' Composite e adapter
 package "Composite & Adapter Patterns" <<Rectangle>> {
 
     interface SmartDevice {
@@ -25,6 +25,14 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
         + getConsumption() : double
     }
 
+    class SmartCamera {
+        - baseConsumption : double
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+        + getLiveFeed() : String
+    }
+
     class Room {
         - devices : List<SmartDevice>
         + addDevice(d: SmartDevice) : void
@@ -41,33 +49,48 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
         + getConsumption() : double
     }
 
-    class BoseSoundSystem {
+    class OldSpeaker {
         + playMusic() : void
         + stopMusic() : void
     }
 
-    class BoseAdapter {
-        - boseSpeakers : BoseSoundSystem
+    class OldSpeakerAdapter {
+        - oldSpeaker : OldSpeaker
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
     }
 
-    ' Composite relazioni
+    class OldTV {
+        + powerOn() : void
+        + powerOff() : void
+    }
+
+    class OldTVAdapter {
+        - oldTV : OldTV
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
+    }
+
+    ' relazioni composite
     SmartDevice <|.. LightBulb
     SmartDevice <|.. Thermostat
+    SmartDevice <|.. SmartCamera
     SmartDevice <|.. Room
     SmartDevice <|.. House
 
     Room o--> SmartDevice : contains
     House o--> SmartDevice : contains
 
-    ' Adapter relazioni
-    SmartDevice <|.. BoseAdapter
-    BoseAdapter --> BoseSoundSystem : adapts
+    ' relazioni adapter
+    SmartDevice <|.. OldSpeakerAdapter
+    SmartDevice <|.. OldTVAdapter
+    OldSpeakerAdapter --> OldSpeaker : adapts
+    OldTVAdapter --> OldTV : adapts
 }
 
-' Observer pattern, sistema per notifiche
+' Observer e sensore che fa da ponte
 package "Observer Pattern" <<Rectangle>> {
 
     interface SensorObserver {
@@ -75,6 +98,10 @@ package "Observer Pattern" <<Rectangle>> {
     }
 
     class MobileApp {
+        - securityCam : SmartCamera
+        + turnOn(device: SmartDevice, deviceName: String) : void
+        + turnOff(device: SmartDevice, deviceName: String) : void
+        + checkConsumption(device: SmartDevice, deviceName: String) : void
         + update(event: String) : void
     }
 
@@ -82,44 +109,38 @@ package "Observer Pattern" <<Rectangle>> {
         + update(event: String) : void
     }
 
-    class SystemLogger {
-        + update(event: String) : void
-    }
-
     class MotionSensor {
         - observers : List<SensorObserver>
+        - isActive : boolean
+        - powerDraw : double
+        + activate() : void
+        + deactivate() : void
+        + getConsumption() : double
         + attach(o: SensorObserver) : void
         + detach(o: SensorObserver) : void
         + notifyObservers(event: String) : void
         + detectIntruder() : void
     }
 
-    '  relazioni Observer
+    ' MotionSensor fa da ponte tra i pattern, è sia SmartDevice nel composite che subject nell'observer
+    SmartDevice <|.. MotionSensor
+
+    ' relazioni observer
     SensorObserver <|.. MobileApp
     SensorObserver <|.. AlarmSystem
-    SensorObserver <|.. SystemLogger
-
     MotionSensor o--> SensorObserver : notifies
+
+    ' connessioni della MobileApp
+    MobileApp --> SmartCamera : gets feed from
+    MobileApp ..> SmartDevice : controls
 }
 
 ' note
 note bottom of House : "Root Composite"
-note bottom of Room : "Intermediate Composite"
 note bottom of LightBulb : "Leaf"
-note bottom of BoseAdapter : "Adapter"
-note bottom of BoseSoundSystem : "Adaptee (External Lib)"
-note top of MotionSensor : "Subject (Observable)"
-note "«Composite»" as N1
-N1 .. House
-N1 .. Room
-N1 .. SmartDevice
-
-note "«Adapter»" as N2
-N2 .. BoseAdapter
-N2 .. BoseSoundSystem
-
-note "«Observer»" as N3
-N3 .. MotionSensor
-N3 .. SensorObserver
+note bottom of OldSpeakerAdapter : "Adapter 1"
+note bottom of OldTVAdapter : "Adapter 2"
+note top of MotionSensor : "Subject & Leaf"
+note right of MobileApp : "Observer & Client\n(Gestisce i dispositivi e reagisce alle emergenze)"
 
 @enduml
