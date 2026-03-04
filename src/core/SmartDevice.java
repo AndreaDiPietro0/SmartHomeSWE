@@ -1,8 +1,8 @@
 package core;
 
 /**
- * interfaccia che rappresenta il “Componente” generico nel modello composite.
- * ogni dispositivo o gruppo di dispositivi presenti in casa deve implementarlo.
+ * interfaccia che rappresenta il componente generico nel composite.
+ * ogni dispositivo o gruppo di dispositivi deve implementarlo.
  */
 public interface SmartDevice {
 
