@@ -1,0 +1,72 @@
+@startuml
+autonumber
+skinparam maxMessageSize 150
+skinparam sequenceMessageAlign center
+
+actor Utente as U
+participant "miaApp: MobileApp" as App
+participant "miaVilla: House" as H
+participant "salotto: Room" as R
+participant "luce: LightBulb" as L
+participant "tvAdapter: OldTVAdapter" as Adp
+participant "vecchiaTV: OldTV" as TV
+
+U -> App : turnOn(miaCasa, "Villa smart")
+activate App
+
+App -> H : activate()
+activate H
+note right of H : attivazione a cascata
+
+H -> R : activate()
+activate R
+
+R -> L : activate()
+activate L
+L --> R : void
+deactivate L
+
+R -> Adp : activate()
+activate Adp
+note right of Adp : traduzione comando\nper il vecchio dispositivo
+
+Adp -> TV : powerOn()
+activate TV
+TV --> Adp : void
+deactivate TV
+
+Adp --> R : void
+deactivate Adp
+
+R --> H : void
+deactivate R
+
+H --> App : void
+deactivate H
+
+U -> App : checkConsumption(miaCasa, "Villa smart")
+App -> H : getConsumption()
+activate H
+H -> R : getConsumption()
+activate R
+
+R -> L : getConsumption()
+activate L
+L --> R : 10.0
+deactivate L
+
+R -> Adp : getConsumption()
+activate Adp
+Adp --> R : 120.0
+deactivate Adp
+
+R --> H : 130.0
+deactivate R
+
+H --> App : 130.0
+deactivate H
+
+App --> U : Mostra consumo (130.0 W)
+deactivate App
+
+@enduml

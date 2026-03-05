@@ -11,39 +11,50 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
         + getConsumption() : double
     }
 
-    class LightBulb {
-        - baseConsumption : double
-        + activate() : void
-        + deactivate() : void
-        + getConsumption() : double
-    }
+   class LightBulb {
+       - baseConsumption : double
+       - isOn : boolean
+       + LightBulb(baseConsumption: double)
+       + activate() : void
+       + deactivate() : void
+       + getConsumption() : double
+   }
 
     class Thermostat {
         - baseConsumption : double
+        - isOn : boolean
+        + Thermostat(baseConsumption: double)
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
     }
 
     class SmartCamera {
-        - baseConsumption : double
-        + activate() : void
-        + deactivate() : void
-        + getConsumption() : double
-        + getLiveFeed() : String
-    }
+            - location : String
+            - baseConsumption : double
+            - isRecording : boolean
+            + SmartCamera(location: String)
+            + activate() : void
+            + deactivate() : void
+            + getConsumption() : double
+            + getLiveFeed() : String
+        }
 
     class Room {
+        - name : String
         - devices : List<SmartDevice>
-        + addDevice(d: SmartDevice) : void
+        + Room(name: String)
+        + addDevice(device: SmartDevice) : void
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
     }
 
     class House {
+        - name : String
         - areas : List<SmartDevice>
-        + addArea(d: SmartDevice) : void
+        + House(name: String)
+        + addArea(area: SmartDevice) : void
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
@@ -55,11 +66,14 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
     }
 
     class OldSpeakerAdapter {
-        - oldSpeaker : OldSpeaker
-        + activate() : void
-        + deactivate() : void
-        + getConsumption() : double
-    }
+            - oldSpeaker : OldSpeaker
+            - isPlaying : boolean
+            - powerDraw : double
+            + OldSpeakerAdapter(legacySpeaker: OldSpeaker)
+            + activate() : void
+            + deactivate() : void
+            + getConsumption() : double
+        }
 
     class OldTV {
         + powerOn() : void
@@ -68,6 +82,9 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
 
     class OldTVAdapter {
         - oldTV : OldTV
+        - isOn : boolean
+        - powerDraw : double
+        + OldTVAdapter(vecchiaTV: OldTV)
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
@@ -90,7 +107,7 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
     OldTVAdapter --> OldTV : adapts
 }
 
-' Observer e sensore che fa da ponte
+' observer e sensore che fa da ponte
 package "Observer Pattern" <<Rectangle>> {
 
     interface SensorObserver {
@@ -99,26 +116,31 @@ package "Observer Pattern" <<Rectangle>> {
 
     class MobileApp {
         - securityCam : SmartCamera
-        + turnOn(device: SmartDevice, deviceName: String) : void
-        + turnOff(device: SmartDevice, deviceName: String) : void
-        + checkConsumption(device: SmartDevice, deviceName: String) : void
+        + MobileApp(securityCam: SmartCamera)
+        + turnOn(device: SmartDevice, name: String) : void
+        + turnOff(device: SmartDevice, name: String) : void
+        + checkConsumption(device: SmartDevice, name: String) : void
         + update(event: String) : void
     }
 
     class AlarmSystem {
+        - isRinging : boolean
         + update(event: String) : void
+        + isRinging() : boolean
     }
 
     class MotionSensor {
+        - location : String
         - observers : List<SensorObserver>
         - isActive : boolean
         - powerDraw : double
+        + MotionSensor(location: String)
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
         + attach(o: SensorObserver) : void
         + detach(o: SensorObserver) : void
-        + notifyObservers(event: String) : void
+        - notifyObservers(event: String) : void
         + detectIntruder() : void
     }
 
@@ -136,11 +158,11 @@ package "Observer Pattern" <<Rectangle>> {
 }
 
 ' note
-note bottom of House : "Root Composite"
-note bottom of LightBulb : "Leaf"
-note bottom of OldSpeakerAdapter : "Adapter 1"
-note bottom of OldTVAdapter : "Adapter 2"
-note top of MotionSensor : "Subject & Leaf"
-note right of MobileApp : "Observer & Client\n(Gestisce i dispositivi e reagisce alle emergenze)"
+note bottom of House : "radice del composite"
+note bottom of LightBulb : "foglia"
+note bottom of OldSpeakerAdapter : "adapter"
+note bottom of OldTVAdapter : "adapter"
+note top of MotionSensor : "subject & foglia"
+note right of MobileApp : "Observer & Client\n(interagisce con i dispositivi)"
 
 @enduml

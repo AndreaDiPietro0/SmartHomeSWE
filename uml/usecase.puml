@@ -1,67 +1,53 @@
 @startuml
 !pragma layout smetana
+
 left to right direction
+skinparam packageStyle rectangle
 
-skinparam usecase {
-    BackgroundColor<<Gestione>> #FEF9E7
-    BackgroundColor<<Sicurezza>> #E8F8F5
-    BorderColor #5D6D7E
-    ArrowColor #5D6D7E
-}
-skinparam actor {
-    BackgroundColor #F5EEF8
-    BorderColor #5D6D7E
-}
-skinparam rectangle {
-    BorderColor #5D6D7E
-    BackgroundColor White
-}
+' Attori
+actor "Utente\n" as User
+actor "Ambiente" as Environment
 
-actor "Utente" as User
-actor "Sensore " as Sensor
+package "Sistema Smart Home" {
 
-rectangle "Smart Home System" {
+    ' sfera composite
+    usecase "Gestire casa e stanze" as UC_ManageHouse
+    usecase "Interagire con dispositivi smart" as UC_ManageDevices
+    usecase "Monitorare consumo energetico" as UC_CheckConsumption
 
-    package "Area Gestione Dispositivi (Composite & Adapter)" {
-        usecase "Configura casa e stanze" as UC_Config <<Gestione>>
-        usecase "Attiva/disattiva l'intera casa" as UC_Activate <<Gestione>>
-        usecase "Calcola consumo totale" as UC_Consumption <<Gestione>>
-    }
+    ' sfera adapter
+    usecase "Controllare vecchi dispositivi" as UC_ManageOld
 
-    package "Area Sicurezza e Monitoraggio (Observer)" {
-        usecase "Rileva intrusione" as UC_Detect <<Sicurezza>>
-        usecase "Notifica app Mobile" as UC_NotifyApp <<Sicurezza>>
-        usecase "Attiva sirena" as UC_Siren <<Sicurezza>>
-        usecase "Registra evento" as UC_Log <<Sicurezza>>
-    }
+    ' sfera observer
+    usecase "Rilevamento intrusione" as UC_Detect
+    usecase "Notificare dispositivi iscritti" as UC_Notify
+    usecase "Attivare sirena" as UC_SoundAlarm
+    usecase "Ricevere notifica su app" as UC_AppAlert
+    usecase "Consultare video telecamera" as UC_LiveFeed
 }
 
-' --- Relazioni con gli Attori ---
-User --> UC_Config
-User --> UC_Activate
-User --> UC_Consumption
+' connessioni attori
+User --> UC_ManageHouse
+User --> UC_ManageDevices
+User --> UC_CheckConsumption
+User --> UC_LiveFeed
 
-Sensor --> UC_Detect
+Environment --> UC_Detect
 
-' --- Relazioni Include (Logica Observer) ---
-UC_Detect ..> UC_NotifyApp : <<include>>
-UC_Detect ..> UC_Siren : <<include>>
-UC_Detect ..> UC_Log : <<include>>
+'relazione tra i casi d'uso
 
-' --- Note esplicative per il collegamento ai Pattern ---
-note top of UC_Config
-  tramite il pattern Composite
-  aggiunge room e smartDevice
-end note
+' il controllo della casa include anche il controllo dei singoli dispositivi
+UC_ManageHouse ..> UC_ManageDevices : <<include>>
 
-note bottom of UC_Activate
-  Attiva in cascata tutti i dispositivi,
-  inclusi gli 'old device' usando l'adapter
-end note
+' il controllo dei dispositivi legacy è un'estensione del controllo standard
+UC_ManageDevices <.. UC_ManageOld : <<extend>>
 
-note right of UC_Detect
-  Il Subject (Sensore) scatta
-  e notifica tutti gli Observer
-end note
+' Effetto catena dell'emergenza (Observer)
+UC_Detect ..> UC_Notify : <<include>>
+UC_Notify ..> UC_SoundAlarm : <<include>>
+UC_Notify ..> UC_AppAlert : <<include>>
+
+' la notifica push porta l'utente ad aprire la telecamera
+UC_AppAlert ..> UC_LiveFeed : <<include>>
 
 @enduml

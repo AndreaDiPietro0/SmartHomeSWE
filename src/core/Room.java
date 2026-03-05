@@ -3,49 +3,41 @@ package core;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * composite intermedio nel modello composite.
- * rappresenta una stanza contenente più smart devices.
- */
 public class Room implements SmartDevice {
-
-    // lista che conterrà le foglie o gli altri rami
+    private String name;
     private List<SmartDevice> devices;
 
-    public Room() {
-        // inizializzo la lista vuota
+    public Room(String name) {
+        this.name = name;
         this.devices = new ArrayList<>();
     }
 
-    // per aggiungere un dispositivo alla stanza
-    public void addDevice(SmartDevice d) {
-        devices.add(d);
+    public void addDevice(SmartDevice device) {
+        devices.add(device);
     }
 
     @Override
     public void activate() {
-        System.out.println("Activating Room");
-        // ciclo for: delega il comando a tutti i dispositivi nella lista
-        for (SmartDevice d : devices) {
-            d.activate();
+        System.out.println("\n[" + name + "] Accensione dispositivi della stanza...");
+        for (SmartDevice device : devices) {
+            device.activate(); // attiva tutti a cascata
         }
     }
 
     @Override
     public void deactivate() {
-        System.out.println("Deactivating Room");
-        for (SmartDevice d : devices) {
-            d.deactivate();
+        System.out.println("\n[" + name + "] Spegnimento dispositivi della stanza...");
+        for (SmartDevice device : devices) {
+            device.deactivate();
         }
     }
 
     @Override
     public double getConsumption() {
-        double total = 0;
-        // somma i consumi di tutti i dispositivi contenuti
-        for (SmartDevice d : devices) {
-            total += d.getConsumption();
+        double totalConsumption = 0.0;
+        for (SmartDevice device : devices) {
+            totalConsumption += device.getConsumption(); // somma i watt di tutte le foglie
         }
-        return total;
+        return totalConsumption;
     }
 }

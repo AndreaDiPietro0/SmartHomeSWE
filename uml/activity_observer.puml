@@ -1,17 +1,32 @@
 @startuml
+title Rilevamento intruso (Observer Pattern)
+
 start
-:Sensore in standby;
-:Rilevato movimento nella stanza;
-if (Sistema Allarme Attivo?) then (Si)
-  fork
-    :Invia notifica alla mobileApp;
-  fork again
-    :Attiva sirena;
-  fork again
-    :Salva evento su database ;
-  end fork
-else (No)
-  :Ignora evento;
+:Movimento fisico rilevato nell'ambiente;
+
+if (Il **MotionSensor** è attivo?) then (No)
+    :Ignora il movimento;
+    stop
+else (Sì)
+    :Esegue **detectIntruder()**;
+    :Chiama **notifyObservers("Intrusione Rilevata")**;
+
+    note right: notifica a tutti gli iscritti
+
+    fork
+        ' Ramo dell'AlarmSystem
+        :L'**AlarmSystem** riceve **update()**;
+        :Imposta **isRinging = true**;
+        :Attiva suono Sirena (Hardware);
+    fork again
+        ' Ramo della MobileApp
+        :La **MobileApp** riceve **update()**;
+        :Mostra **Notifica Push** all'utente;
+        :Richiede il video alla **SmartCamera**\ntramite **getLiveFeed()**;
+        :Visualizza il video sullo schermo;
+    end fork
+
+    :Fine gestione emergenza;
+    stop
 endif
-stop
 @enduml

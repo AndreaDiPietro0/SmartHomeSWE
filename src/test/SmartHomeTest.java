@@ -1,75 +1,124 @@
-package test;
-
+import adapter.OldSpeaker;
+import adapter.OldSpeakerAdapter;
+import adapter.OldTV;
+import adapter.OldTVAdapter;
 import core.*;
-import adapter.*;
-import observer.*;
+import observer.AlarmSystem;
+import observer.MobileApp;
+import observer.MotionSensor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SmartHomeTest {
 
-    @Test
-    public void testCompositeConsumption() {
-        // 1. preparazione
-        LightBulb bulb1 = new LightBulb(15.0);
-        LightBulb bulb2 = new LightBulb(15.0);
-        Thermostat thermostat = new Thermostat(2000.0);
+    private House miaCasa;
+    private Room salotto;
+    private Room giardino;
+    private SmartDevice luce;
+    private Thermostat termostato;
+    private SmartCamera telecamera;
+    private OldTVAdapter tvAdapter;
+    private OldSpeakerAdapter stereoAdapter;
+    private MotionSensor sensore;
+    private AlarmSystem sirena;
+    private MobileApp app;
 
-        Room livingRoom = new Room();
-        livingRoom.addDevice(bulb1);
-        livingRoom.addDevice(thermostat);
+    // @BeforeEach viene eseguito prima di ogni test, cosi ho sempre una casa nuova
+    @BeforeEach
+    public void setUp() {
+        // inizializzo tutti i componenti
+        luce = new LightBulb(10.0);
+        termostato = new Thermostat(1500.0);
+        telecamera = new SmartCamera("Giardino");
 
-        Room bedroom = new Room();
-        bedroom.addDevice(bulb2);
+        tvAdapter = new OldTVAdapter(new OldTV());
+        stereoAdapter = new OldSpeakerAdapter(new OldSpeaker());
 
-        House myHouse = new House();
-        myHouse.addArea(livingRoom);
-        myHouse.addArea(bedroom);
+        sensore = new MotionSensor("Cancello");
+        sirena = new AlarmSystem();
+        app = new MobileApp(telecamera);
 
-        // 2. esecuzione
-        double totalConsumption = myHouse.getConsumption();
+        // costruisco l'albero del composite
+        salotto = new Room("Salotto");
+        salotto.addDevice(luce);
+        salotto.addDevice(tvAdapter);
 
-        // 3. verifica
-        assertEquals(2030.0, totalConsumption, "Il pattern composite non calcola correttamente il consumo totale");
+        giardino = new Room("Giardino");
+        giardino.addDevice(telecamera);
+        giardino.addDevice(sensore);
+
+        miaCasa = new House("Villa smart");
+        miaCasa.addArea(salotto);
+        miaCasa.addArea(giardino);
+        miaCasa.addArea(termostato); // il termostato è collegato direttamente alla casa
     }
 
+    // 1. Test foglie
     @Test
-    public void testAdapterIntegration() {
-        // 1. preparazione
-        Room entertainmentRoom = new Room();
-        LightBulb ledLight = new LightBulb(5.0);
+    public void testSmartCameraLogic() {
+        // 1. verifico lo stato spento
+        assertEquals(0.0, telecamera.getConsumption(), 0.01, "La telecamera spenta consuma 0");
+        assertTrue(telecamera.getLiveFeed().contains("[OFF]"));
 
-        BoseSoundSystem boseSystem = new BoseSoundSystem();
-        BoseAdapter boseAdapter = new BoseAdapter(boseSystem);
+        // 2. accendo
+        telecamera.activate();
 
-        // 2. esecuzione
-        entertainmentRoom.addDevice(ledLight);
-        entertainmentRoom.addDevice(boseAdapter); // aggiugno l'adapter come se fosse un dispositivo normale
-
-        double roomConsumption = entertainmentRoom.getConsumption();
-
-        // 3. verifica
-        // il BoseAdapter ha un consumo fisso di 120.0W nel codice, 120 + 5 = 125
-        assertEquals(125.0, roomConsumption, "L'adapter non si integra correttamente nel composite");
+        // 3. verifico lo stato acceso
+        assertEquals(15.0, telecamera.getConsumption(), 0.01, "La telecamera accesa consuma 15W");
+        assertTrue(telecamera.getLiveFeed().contains("[REC]"));
+        assertTrue(telecamera.getLiveFeed().contains("Giardino"));
     }
 
+    // 2. Test adapter
     @Test
-    public void testObserverAttachment() {
-        // 1. preparazione
-        MotionSensor sensor = new MotionSensor("garage");
-        MobileApp app = new MobileApp();
-        AlarmSystem alarm = new AlarmSystem();
+    public void testLegacyAdapters() {
+        tvAdapter.activate();
+        assertEquals(120.0, tvAdapter.getConsumption(), "L'Adapter oldTV non consuma il valore corretto");
 
-        // 2. esecuzione
-        sensor.attach(app);
-        sensor.attach(alarm);
-        sensor.detach(app); // rimuovo l'app per testare la disiscrizione
+        stereoAdapter.activate();
+        assertEquals(45.0, stereoAdapter.getConsumption(), "L'Adapter oldSpeaker non consuma il valore corretto");
 
-        // 3. verifica
-        // siccome non posso testare l'output su console in modo semplice, verifico che il sensore non vada in crash,
-        // eseguo la notifica dopo aver aggiunto e rimosso gli observer.
-        assertDoesNotThrow(() -> {
-            sensor.detectIntruder();
-        }, "Il pattern observer ha generato un'eccezione durante la notifica");
+        stereoAdapter.deactivate();
+        assertEquals(0.0, stereoAdapter.getConsumption(), "Lo stereo spento consuma 0");
+    }
+
+    // 3. Test composite
+    @Test
+    public void testDeepCompositeTree() {
+        // Accendiamo l'INTERA casa
+        miaCasa.activate();
+
+        // consumo totale atteso:
+        // salotto: llampadina 10 + TV 120 = 130
+        // giardino: telecamera15 + sensore2 = 17
+        // casa: termostato1500
+        // tot = 130 + 17 + 1500 = 1647.0
+
+        assertEquals(1647.0, miaCasa.getConsumption(), 0.01, "Il Composite non calcola bene la somma");
+
+        // spengo il salotto
+        salotto.deactivate();
+
+        // nuovo tot 1647 - 130 = 1517.0
+        assertEquals(1517.0, miaCasa.getConsumption(), 0.01, "Il Composite non aggiorna i dispositivi spenti");
+    }
+
+    // 4. test observer e app
+    @Test
+    public void testObserverAndEmergency() {
+        sensore.attach(sirena);
+        sensore.attach(app);
+
+        // sensore spento, il movimento non deve far scattare nulla
+        sensore.detectIntruder();
+        assertFalse(sirena.isRinging(), "La sirena si è accesa ma il sensore era disattivato");
+
+        // attivo sensore e simulo intruso
+        sensore.activate();
+        sensore.detectIntruder();
+
+        assertTrue(sirena.isRinging(), "Il sensore non ha notificato la sirena");
+        // l'app stampa in console, e la sirena conferma che il subject ha inviato la notifica a tutti)
     }
 }

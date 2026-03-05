@@ -1,0 +1,33 @@
+@startuml
+skinparam activityShape octagon
+
+title Attivazione della casa (Composite & Adapter)
+
+start
+:L'Utente preme "Accendi Casa" sulla MobileApp;
+:Chiamata a **House.activate()**;
+
+while (Ci sono ancora Aree/Stanze nella lista?) is (Sì)
+    :Estrai la prossima **Room**;
+    :Chiamata a **Room.activate()**;
+
+    while (Ci sono ancora Dispositivi nella lista della Stanza?) is (Sì)
+        :Estrai il prossimo **SmartDevice**;
+
+        if (Che tipo di implementazione è?) then (Foglia standard)
+            :Esegui **activate()** nativo;
+            :Imposta **isOn = true**;
+        else (Adapter)
+            :Esegui **activate()** dell'Adapter;
+            :L'Adapter traduce il comando;
+            :Esegui **powerOn()** o **playMusic()**\nsul dispositivo obsoleto;
+        endif
+
+    endwhile (No)
+
+endwhile (No)
+
+:Ritorna il controllo alla MobileApp;
+:Aggiorna l'interfaccia utente;
+stop
+@enduml

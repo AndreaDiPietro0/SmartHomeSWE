@@ -13,13 +13,13 @@ public class SmartCamera implements SmartDevice {
     @Override
     public void activate() {
         isRecording = true;
-        System.out.println("[SmartCamera - " + location + "] 📹 ATTIVATA e in registrazione.");
+        System.out.println("[SmartCamera - " + location + "] ATTIVATA e in registrazione.");
     }
 
     @Override
     public void deactivate() {
         isRecording = false;
-        System.out.println("[SmartCamera - " + location + "] 📹 DISATTIVATA.");
+        System.out.println("[SmartCamera -" + location + "] DISATTIVATA.");
     }
 
     @Override
@@ -30,9 +30,9 @@ public class SmartCamera implements SmartDevice {
     // metodo chiamato dall'app
     public String getLiveFeed() {
         if (isRecording) {
-            return "[REC 🔴] Feed 1080p: Inquadratura '" + location + "' pulita. Nessuna anomalia.";
+            return "[REC] Inquadratura '" + location + "'";
         } else {
-            return "[OFF ⬛] Segnale assente. Telecamera '" + location + "' offline.";
+            return "[OFF] Segnale assente. Telecamera '" + location + "' offline.";
         }
     }
 }

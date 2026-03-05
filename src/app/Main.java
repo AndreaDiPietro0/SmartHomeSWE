@@ -5,78 +5,70 @@ import adapter.*;
 import observer.*;
 
 public class Main {
-
     public static void main(String[] args) {
+        System.out.println("* INIZIALIZZAZIONE SMART HOME *\n");
 
-        System.out.println(".");
-        System.out.println("        INIZIALIZZAZIONE SMART HOME");
-        System.out.println(".\n");
+        // 1. creazione delle foglie
+        SmartDevice luceSalotto = new LightBulb(10.0);
+        SmartDevice termostato = new Thermostat(1500.0);
+        SmartCamera camIngresso = new SmartCamera("Ingresso Principale");
 
-        //
-        // Test Composite e Adapter
-        //
-        System.out.println("1. Configurazione Dispositivi e Stanze");
+        // 2. creazione dei vecchi dispositivi per l'adapter
+        OldTV vecchiaTV = new OldTV();
+        SmartDevice tvAdapter = new OldTVAdapter(vecchiaTV);
 
-        // creo dispositivi base (foglie)
-        LightBulb luceSalotto = new LightBulb(10.0);
-        Thermostat termostatoSalotto = new Thermostat(1500.0);
+        OldSpeaker vecchioStereo = new OldSpeaker();
+        SmartDevice stereoAdapter = new OldSpeakerAdapter(vecchioStereo);
 
-        // creo il salotto (ramo) e aggiungo i dispositivi
-        Room salotto = new Room();
-        salotto.addDevice(luceSalotto);
-        salotto.addDevice(termostatoSalotto);
+        // 3. creazione del sensore (il subject dell'observer)
+        MotionSensor sensoreIngresso = new MotionSensor("Porta d'ingresso");
 
-        // adapter
-        // integro le casse Bose nel salotto come se fossero un dispositivo normale
-        BoseSoundSystem sistemaBose = new BoseSoundSystem();
-        BoseAdapter boseAdapter = new BoseAdapter(sistemaBose);
-        salotto.addDevice(boseAdapter);
-
-        // creo un altra stanza
-        LightBulb luceCamera = new LightBulb(10.0);
-        Room camera = new Room();
-        camera.addDevice(luceCamera);
-
-        // Composite
-        // creo la casa (radice) e aggiungo le stanze
-        House miaCasa = new House();
-        miaCasa.addArea(salotto);
-        miaCasa.addArea(camera);
-
-        System.out.println("\n2. Attivazione totale della casa ");
-        miaCasa.activate();
-
-        System.out.println("\nConsumo totale della casa: " + miaCasa.getConsumption() + " Watt\n");
-
-        //
-        // Test Observer
-        //
-        System.out.println(".");
-        System.out.println("        TEST SISTEMA DI SICUREZZA");
-        System.out.println(".");
-
-        // creo sensore
-        MotionSensor sensoreIngresso = new MotionSensor("Ingresso Principale");
-
-        // creo i 3 osservatori
-        MobileApp appProprietario = new MobileApp();
+        // 4. creazione dell'app e della sirena (observer)
+        MobileApp miaApp = new MobileApp(camIngresso);
         AlarmSystem sirena = new AlarmSystem();
-        SystemLogger databaseLogger = new SystemLogger();
 
-        // iscrivo gli osservatori al sensore
-        sensoreIngresso.attach(appProprietario);
+        // iscriviamo app e sirena agli avvisi del sensore
+        sensoreIngresso.attach(miaApp);
         sensoreIngresso.attach(sirena);
-        sensoreIngresso.attach(databaseLogger);
 
-        // simulo ingresso di un ladro
+        // 5. creazione delle stanze e della radice casa
+        Room salotto = new Room("Salotto");
+        salotto.addDevice(luceSalotto);
+        salotto.addDevice(tvAdapter);
+        salotto.addDevice(stereoAdapter);
+
+        Room corridoio = new Room("Corridoio");
+        corridoio.addDevice(camIngresso);
+        corridoio.addDevice(sensoreIngresso);
+
+        House miaVilla = new House("Villa smart");
+        miaVilla.addArea(salotto);
+        miaVilla.addArea(corridoio);
+
+        System.out.println("Configurazione completata\n");
+
+        // test COMPOSITE e ADAPTER tramite l'App
+        System.out.println("- L'utente usa l'app per interagire con la sua casa smart -");
+
+        // l'app accende tutta la casa
+        miaApp.turnOn(miaVilla, "Villa smart");
+
+        // l'app controlla i consumi globali
+        miaApp.checkConsumption(miaVilla, "Villa smart");
+
+        // l'utente vuole spegnere il vecchio stereo dal salotto
+        miaApp.turnOff(stereoAdapter, "Vecchio stereo salotto");
+
+        // ricontrollo i consumi che dovrebber essere scesi
+        miaApp.checkConsumption(miaVilla, "Villa smart");
+
+
+        // Test OBSERVER
+        System.out.println("\n\n-Un ladro prova a entrare-");
+
+        // simula il movimento rilevato dal sensore
         sensoreIngresso.detectIntruder();
 
-        //
-        // Spegnimento
-        //
-        System.out.println("\n.");
-        System.out.println("        SPEGNIMENTO GLOBALE");
-        System.out.println(".\n");
-        miaCasa.deactivate();
+        System.out.println("\n* FINE SIMULAZIONE *");
     }
 }

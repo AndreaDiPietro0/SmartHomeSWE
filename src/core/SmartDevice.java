@@ -1,17 +1,11 @@
 package core;
 
-/**
- * interfaccia che rappresenta il componente generico nel composite.
- * ogni dispositivo o gruppo di dispositivi deve implementarlo.
- */
+//interfaccia che rappresenta il componente generico nel composite, ogni dispositivo o gruppo di dispositivi deve implementarlo.
+
 public interface SmartDevice {
 
-    // accende il dispositivo o gruppo
-    void activate();
+    void activate(); // accende il dispositivo o gruppo
+    void deactivate(); // spenge il dispositivo/gruppo
+    double getConsumption(); // ritorna il consumo energetico in watt
 
-    // spenge il dispositivo/gruppo
-    void deactivate();
-
-    // ritorna il consumo energetico in watt
-    double getConsumption();
 }

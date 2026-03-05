@@ -1,47 +1,46 @@
 @startuml
 autonumber
-actor "Ladro" as Ladro
+skinparam sequenceMessageAlign center
 
-box "Subject (Observable)" #E8F8F5
-participant "sensor : MotionSensor" as Sensor
-end box
+actor "Intruso" as Intruso
+participant "sensore: MotionSensor" as Sensore
+participant "sirena: AlarmSystem" as Sirena
+participant "app: MobileApp" as App
+participant "cam: SmartCamera" as Cam
 
-box "Observers (Iscritti)" #FEF9E7
-participant "app : MobileApp" as App
-participant "sirena : AlarmSystem" as Sirena
-participant "logger : SystemLogger" as Logger
-end box
+Intruso -> Sensore : Movimento fisico
+activate Sensore
 
-Ladro -> Sensor : detectIntruder()
-activate Sensor
-note right of Sensor: Il sensore rileva il movimento\ne invia le notifiche
+Sensore -> Sensore : detectIntruder()
+activate Sensore
 
-Sensor -> Sensor : notifyObservers("Intruso in salotto")
-activate Sensor
-note right of Sensor: Itera sulla sua lista interna\ndegli observers
+Sensore -> Sensore : notifyObservers("Intrusione Rilevata")
+activate Sensore
 
-== Broadcoast agli Observer ==
+note over Sensore, App : Iterazione sulla lista observers
+loop per ogni observer in observers
 
-Sensor -> App : update("Intruso in Salotto")
-activate App
-note right of App: Mostra una notifica\npush sul telefono
-App --> Sensor : return
-deactivate App
+    Sensore -> Sirena : update("Intrusione rilevata")
+    activate Sirena
+    note right of Sirena : Suona l'allarme
+    Sirena --> Sensore : void
+    deactivate Sirena
 
-Sensor -> Sirena : update("Intruso in salotto")
-activate Sirena
-note right of Sirena: Attiva l'allarme
-Sirena --> Sensor : return
-deactivate Sirena
+    Sensore -> App : update("Intrusione Rilevata")
+    activate App
+    note right of App : Mostra notifica push
 
-Sensor -> Logger : update("Intruso in salotto")
-activate Logger
-note right of Logger: Registra l'evento\nnel database
-Logger --> Sensor : return
-deactivate Logger
+    App -> Cam : getLiveFeed()
+    activate Cam
+    Cam --> App : "[REC] Live Feed..."
+    deactivate Cam
 
-deactivate Sensor
-Sensor --> Ladro : (fine processo)
-deactivate Sensor
+    App --> Sensore : void
+    deactivate App
+end
+
+deactivate Sensore
+deactivate Sensore
+deactivate Sensore
 
 @enduml

@@ -1,22 +1,25 @@
 package core;
 
-/**
- * componente foglia nel modello composite. rappresenta una singola lampadina smart.
- */
+//componente foglia nel modello composite, rappresenta una lampadina smart
+
 public class LightBulb implements SmartDevice {
-    private double baseConsumption = 10.0; // consuma 10 Watt
+    private double baseConsumption;
     private boolean isOn = false;
+
+    public LightBulb(double baseConsumption) {
+        this.baseConsumption = baseConsumption;
+    }
 
     @Override
     public void activate() {
         isOn = true;
-        System.out.println("[LightBulb] 💡 Luce ACCESA.");
+        System.out.println("[Lampadina] Luce ACCESA.");
     }
 
     @Override
     public void deactivate() {
         isOn = false;
-        System.out.println("[LightBulb] 💡 Luce SPENTA.");
+        System.out.println("[Lampadina] Luce SPENTA.");
     }
 
     @Override

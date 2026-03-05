@@ -1,12 +1,17 @@
 package observer;
 
-/**
- * 2 concrete observer: la sirena d'allarme della casa.
- */
+// sirena d'allarme della casa. concrete observer
 public class AlarmSystem implements SensorObserver {
+
+    private boolean isRinging = false;
 
     @Override
     public void update(String event) {
-        System.out.println("Sistema di Allarme: ATTIVAZIONE SIRENA! Motivo: " + event);
+        isRinging = true;
+        System.out.println("[Allarme Sirena] ALLARME SONORO: " + event);
+    }
+
+    public boolean isRinging() {
+        return isRinging;
     }
 }

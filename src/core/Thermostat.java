@@ -1,12 +1,11 @@
 package core;
 
-/**
- * componente foglia nel modello composite
- * rappresenta un singolo termostato smart.
- */
+//foglia nel modello composite che rappresenta un termostato smart.
+
 public class Thermostat implements SmartDevice {
 
     private double baseConsumption;
+    private boolean isOn = false;
 
     // costruttore
     public Thermostat(double baseConsumption) {
@@ -15,18 +14,19 @@ public class Thermostat implements SmartDevice {
 
     @Override
     public void activate() {
-        System.out.println("Thermostat turned ON.\n");
-
+        isOn = true;
+        System.out.println("[Termostato] Riscaldamento ACCESO.");
     }
 
     @Override
     public void deactivate() {
-        System.out.println("Thermostat turned OFF.\n");
-
+        isOn = false;
+        System.out.println("[Termostato] Riscaldamento SPENTO.");
     }
 
     @Override
     public double getConsumption() {
-        return baseConsumption;
+        // consuma energia solo se è acceso
+        return isOn ? baseConsumption : 0.0;
     }
 }
