@@ -134,13 +134,13 @@ package "Observer Pattern" <<Rectangle>> {
         - observers : List<SensorObserver>
         - isActive : boolean
         - powerDraw : double
+        - notifyObservers(event: String) : void
         + MotionSensor(location: String)
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
         + attach(o: SensorObserver) : void
         + detach(o: SensorObserver) : void
-        - notifyObservers(event: String) : void
         + detectIntruder() : void
     }
 

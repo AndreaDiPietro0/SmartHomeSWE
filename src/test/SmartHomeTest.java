@@ -24,7 +24,7 @@ public class SmartHomeTest {
     private AlarmSystem sirena;
     private MobileApp app;
 
-    // @BeforeEach viene eseguito prima di ogni test, cosi ho sempre una casa nuova
+    // @BeforeEach eseguito prima di ogni test, cosi ho sempre una casa nuova
     @BeforeEach
     public void setUp() {
         // inizializzo tutti i componenti
@@ -39,7 +39,7 @@ public class SmartHomeTest {
         sirena = new AlarmSystem();
         app = new MobileApp(telecamera);
 
-        // costruisco l'albero del composite
+        // costruisco il composite
         salotto = new Room("Salotto");
         salotto.addDevice(luce);
         salotto.addDevice(tvAdapter);
@@ -57,14 +57,14 @@ public class SmartHomeTest {
     // 1. Test foglie
     @Test
     public void testSmartCameraLogic() {
-        // 1. verifico lo stato spento
+        // verifico lo stato spento
         assertEquals(0.0, telecamera.getConsumption(), 0.01, "La telecamera spenta consuma 0");
         assertTrue(telecamera.getLiveFeed().contains("[OFF]"));
 
-        // 2. accendo
+        // accendo
         telecamera.activate();
 
-        // 3. verifico lo stato acceso
+        // verifico lo stato acceso
         assertEquals(15.0, telecamera.getConsumption(), 0.01, "La telecamera accesa consuma 15W");
         assertTrue(telecamera.getLiveFeed().contains("[REC]"));
         assertTrue(telecamera.getLiveFeed().contains("Giardino"));
@@ -72,7 +72,7 @@ public class SmartHomeTest {
 
     // 2. Test adapter
     @Test
-    public void testLegacyAdapters() {
+    public void testOldAdapter() {
         tvAdapter.activate();
         assertEquals(120.0, tvAdapter.getConsumption(), "L'Adapter oldTV non consuma il valore corretto");
 
@@ -86,7 +86,7 @@ public class SmartHomeTest {
     // 3. Test composite
     @Test
     public void testDeepCompositeTree() {
-        // Accendiamo l'INTERA casa
+        // accendo l'intera casa
         miaCasa.activate();
 
         // consumo totale atteso:
@@ -95,13 +95,13 @@ public class SmartHomeTest {
         // casa: termostato1500
         // tot = 130 + 17 + 1500 = 1647.0
 
-        assertEquals(1647.0, miaCasa.getConsumption(), 0.01, "Il Composite non calcola bene la somma");
+        assertEquals(1647.0, miaCasa.getConsumption(), 0.01, "Il composite non calcola bene la somma");
 
         // spengo il salotto
         salotto.deactivate();
 
         // nuovo tot 1647 - 130 = 1517.0
-        assertEquals(1517.0, miaCasa.getConsumption(), 0.01, "Il Composite non aggiorna i dispositivi spenti");
+        assertEquals(1517.0, miaCasa.getConsumption(), 0.01, "Il composite non aggiorna i dispositivi spenti");
     }
 
     // 4. test observer e app
@@ -110,7 +110,7 @@ public class SmartHomeTest {
         sensore.attach(sirena);
         sensore.attach(app);
 
-        // sensore spento, il movimento non deve far scattare nulla
+        // sensore spento, il movimento non dovrebbe far scattare nulla
         sensore.detectIntruder();
         assertFalse(sirena.isRinging(), "La sirena si è accesa ma il sensore era disattivato");
 
@@ -119,6 +119,6 @@ public class SmartHomeTest {
         sensore.detectIntruder();
 
         assertTrue(sirena.isRinging(), "Il sensore non ha notificato la sirena");
-        // l'app stampa in console, e la sirena conferma che il subject ha inviato la notifica a tutti)
+        // l'app stampa e la sirena conferma che il subject ha inviato la notifica a tutti
     }
 }
