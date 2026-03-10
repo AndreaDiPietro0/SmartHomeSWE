@@ -27,7 +27,7 @@ public class SmartHomeGUI {
     private JToggleButton btnMaster; // globale per poterlo aggiornare dal basso
 
     public SmartHomeGUI() {
-        inizializzaBackend();
+        initializeBackend();
 
         JFrame frame = new JFrame("Smart Home App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,30 +52,30 @@ public class SmartHomeGUI {
         consumptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         btnMaster = new JToggleButton("ACCENDI TUTTA LA CASA");
-        personalizzaBottone(btnMaster, new Color(41, 128, 185), 20);
+        customizeButton(btnMaster, new Color(41, 128, 185), 20);
         btnMaster.addActionListener(e -> {
             boolean isOn = btnMaster.isSelected();
             if (isOn) {
                 house.activate();
-                aggiornaGraficaBottone(btnMaster, true, "SPENGI TUTTA LA CASA", new Color(192, 57, 43));
+                updateButtonGraphics(btnMaster, true, "SPENGI TUTTA LA CASA", new Color(192, 57, 43));
             } else {
                 house.deactivate();
-                aggiornaGraficaBottone(btnMaster, false, "ACCENDI TUTTA LA CASA", new Color(41, 128, 185));
+                updateButtonGraphics(btnMaster, false, "ACCENDI TUTTA LA CASA", new Color(41, 128, 185));
             }
 
             // aggiorna top down, verso il basso
             for (JToggleButton rb : roomButtons) {
                 rb.setSelected(isOn);
                 String nomeStanza = rb.getText().substring(rb.getText().indexOf("-") + 2).trim();
-                aggiornaGraficaBottone(rb, isOn, (isOn ? "ON - " : "OFF - ") + nomeStanza, isOn ? new Color(46, 204, 113) : new Color(70, 70, 70));
+                updateButtonGraphics(rb, isOn, (isOn ? "ON - " : "OFF - ") + nomeStanza, isOn ? new Color(46, 204, 113) : new Color(70, 70, 70));
 
                 for (JToggleButton db : roomToDevicesMap.get(rb)) {
                     db.setSelected(isOn);
                     String nomeDevice = db.getText().substring(db.getText().indexOf("-") + 2).trim();
-                    aggiornaGraficaBottone(db, isOn, (isOn ? "ON - " : "OFF - ") + nomeDevice, isOn ? new Color(241, 196, 15) : new Color(50, 50, 50));
+                    updateButtonGraphics(db, isOn, (isOn ? "ON - " : "OFF - ") + nomeDevice, isOn ? new Color(241, 196, 15) : new Color(50, 50, 50));
                 }
             }
-            aggiornaConsumi();
+            updateConsumption();
         });
 
         headerPanel.add(titleLabel);
@@ -91,12 +91,12 @@ public class SmartHomeGUI {
         bodyPanel.setBackground(new Color(25, 25, 25));
         bodyPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        bodyPanel.add(creaPannelloStanza("Salotto",
+        bodyPanel.add(createRoomPanel("Salotto",
                 new Object[][]{{"Luce principale", new LightBulb(15.0)}, {"Vecchia TV", new OldTVAdapter(new OldTV())}}));
         bodyPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         // Camera con 3 dispositivi
-        bodyPanel.add(creaPannelloStanza("Camera",
+        bodyPanel.add(createRoomPanel("Camera",
                 new Object[][]{
                         {"Lampada", new LightBulb(10.0)},
                         {"Termostato", new Thermostat(500.0)},
@@ -105,13 +105,13 @@ public class SmartHomeGUI {
         bodyPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         // Cucina con 1 solo dispositivo
-        bodyPanel.add(creaPannelloStanza("Cucina",
+        bodyPanel.add(createRoomPanel("Cucina",
                 new Object[][]{
                         {"Luce fornelli", new LightBulb(20.0)}
                 }));
         bodyPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        bodyPanel.add(creaPannelloStanza("Ingresso",
+        bodyPanel.add(createRoomPanel("Ingresso",
                 new Object[][]{{"Telecamera smart", cam}, {"Sensore di movimento", sensor}}));
         bodyPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
@@ -154,7 +154,7 @@ public class SmartHomeGUI {
         frame.setVisible(true);
     }
 
-    private void inizializzaBackend() {
+    private void initializeBackend() {
         house = new House("Smart Home");
 
         cam = new SmartCamera("Ingresso");
@@ -166,7 +166,7 @@ public class SmartHomeGUI {
         sensor.attach(sirena);
     }
 
-    private JPanel creaPannelloStanza(String nomeStanza, Object[][] dispositiviInfo) {
+    private JPanel createRoomPanel(String nomeStanza, Object[][] dispositiviInfo) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(new Color(35, 35, 35));
@@ -178,7 +178,7 @@ public class SmartHomeGUI {
         house.addArea(room);
 
         JToggleButton btnStanza = new JToggleButton("OFF - " + nomeStanza);
-        personalizzaBottone(btnStanza, new Color(70, 70, 70), 16);
+        customizeButton(btnStanza, new Color(70, 70, 70), 16);
         panel.add(btnStanza);
         roomButtons.add(btnStanza);
 
@@ -191,22 +191,22 @@ public class SmartHomeGUI {
             room.addDevice(device);
 
             JToggleButton btnDevice = new JToggleButton("OFF - " + nomeDevice);
-            personalizzaBottone(btnDevice, new Color(50, 50, 50), 14);
+            customizeButton(btnDevice, new Color(50, 50, 50), 14);
             btnDevice.setMaximumSize(new Dimension(350, 35));
 
             btnDevice.addActionListener(e -> {
                 boolean isOn = btnDevice.isSelected();
                 if (isOn) {
                     device.activate();
-                    aggiornaGraficaBottone(btnDevice, true, "ON - " + nomeDevice, new Color(241, 196, 15));
+                    updateButtonGraphics(btnDevice, true, "ON - " + nomeDevice, new Color(241, 196, 15));
                 } else {
                     device.deactivate();
-                    aggiornaGraficaBottone(btnDevice, false, "OFF - " + nomeDevice, new Color(50, 50, 50));
+                    updateButtonGraphics(btnDevice, false, "OFF - " + nomeDevice, new Color(50, 50, 50));
                 }
 
                 // aggiornamento dal basso verso l'alto
-                controllaStatoStanza(btnStanza, deviceBtns);
-                aggiornaConsumi();
+                checkRoomState(btnStanza, deviceBtns);
+                updateConsumption();
             });
 
             panel.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -220,21 +220,21 @@ public class SmartHomeGUI {
 
             if (isOn) {
                 room.activate();
-                aggiornaGraficaBottone(btnStanza, true, "ON - " + nStanza, new Color(46, 204, 113));
+                updateButtonGraphics(btnStanza, true, "ON - " + nStanza, new Color(46, 204, 113));
             } else {
                 room.deactivate();
-                aggiornaGraficaBottone(btnStanza, false, "OFF - " + nStanza, new Color(70, 70, 70));
+                updateButtonGraphics(btnStanza, false, "OFF - " + nStanza, new Color(70, 70, 70));
             }
 
             for (JToggleButton db : deviceBtns) {
                 db.setSelected(isOn);
                 String n = db.getText().substring(db.getText().indexOf("-") + 2).trim();
-                aggiornaGraficaBottone(db, isOn, (isOn ? "ON - " : "OFF - ") + n, isOn ? new Color(241, 196, 15) : new Color(50, 50, 50));
+                updateButtonGraphics(db, isOn, (isOn ? "ON - " : "OFF - ") + n, isOn ? new Color(241, 196, 15) : new Color(50, 50, 50));
             }
 
             // aggiorna dal basso verso l'alto
-            controllaStatoCasa();
-            aggiornaConsumi();
+            checkHouseState();
+            updateConsumption();
         });
 
         return panel;
@@ -244,37 +244,37 @@ public class SmartHomeGUI {
 
     // se almeno un dispositivo è acceso, allora accende la stanza
     // se tutti spenti, spenge la stanza
-    private void controllaStatoStanza(JToggleButton btnStanza, List<JToggleButton> deviceBtns) {
-        boolean isQualcosaAcceso = deviceBtns.stream().anyMatch(JToggleButton::isSelected);
+    private void checkRoomState(JToggleButton btnStanza, List<JToggleButton> deviceBtns) {
+        boolean isAnyDeviceOn = deviceBtns.stream().anyMatch(JToggleButton::isSelected);
         String nStanza = btnStanza.getText().substring(btnStanza.getText().indexOf("-") + 2).trim();
 
-        btnStanza.setSelected(isQualcosaAcceso);
-        aggiornaGraficaBottone(btnStanza, isQualcosaAcceso,
-                (isQualcosaAcceso ? "ON - " : "OFF - ") + nStanza,
-                isQualcosaAcceso ? new Color(46, 204, 113) : new Color(70, 70, 70));
+        btnStanza.setSelected(isAnyDeviceOn);
+        updateButtonGraphics(btnStanza, isAnyDeviceOn,
+                (isAnyDeviceOn ? "ON - " : "OFF - ") + nStanza,
+                isAnyDeviceOn ? new Color(46, 204, 113) : new Color(70, 70, 70));
 
-        controllaStatoCasa(); // Propaga l'aggiornamento alla casa
+        checkHouseState(); // Propaga l'aggiornamento alla casa
     }
 
     // controlla se almeno una stanza è accesa
     // se tutte spente, spenge il bottone master.
-    private void controllaStatoCasa() {
-        boolean isQualcosaAcceso = roomButtons.stream().anyMatch(JToggleButton::isSelected);
+    private void checkHouseState() {
+        boolean isAnyDeviceOn = roomButtons.stream().anyMatch(JToggleButton::isSelected);
 
-        btnMaster.setSelected(isQualcosaAcceso);
-        aggiornaGraficaBottone(btnMaster, isQualcosaAcceso,
-                isQualcosaAcceso ? "SPENGI TUTTA LA CASA" : "ACCENDI TUTTA LA CASA",
-                isQualcosaAcceso ? new Color(192, 57, 43) : new Color(41, 128, 185));
+        btnMaster.setSelected(isAnyDeviceOn);
+        updateButtonGraphics(btnMaster, isAnyDeviceOn,
+                isAnyDeviceOn ? "SPENGI TUTTA LA CASA" : "ACCENDI TUTTA LA CASA",
+                isAnyDeviceOn ? new Color(192, 57, 43) : new Color(41, 128, 185));
     }
 
     // metodi helper
 
-    private void aggiornaConsumi() {
+    private void updateConsumption() {
         double watt = house.getConsumption();
         consumptionLabel.setText("Consumo Totale: " + watt + " W/h");
     }
 
-    private void personalizzaBottone(JToggleButton btn, Color bg, int fontSize) {
+    private void customizeButton(JToggleButton btn, Color bg, int fontSize) {
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
         btn.setMaximumSize(new Dimension(400, 45));
         btn.setBackground(bg);
@@ -300,7 +300,7 @@ public class SmartHomeGUI {
         });
     }
 
-    private void aggiornaGraficaBottone(JToggleButton btn, boolean isOn, String text, Color color) {
+    private void updateButtonGraphics(JToggleButton btn, boolean isOn, String text, Color color) {
         btn.setText(text);
         btn.setBackground(color);
     }
@@ -308,10 +308,10 @@ public class SmartHomeGUI {
     private void redirectSystemOut(JTextArea textArea) {
         OutputStream out = new OutputStream() {
             @Override
-            public void write(int b) { aggiornaTesto(String.valueOf((char) b)); }
+            public void write(int b) { updateText(String.valueOf((char) b)); }
             @Override
-            public void write(byte[] b, int off, int len) { aggiornaTesto(new String(b, off, len)); }
-            private void aggiornaTesto(String text) {
+            public void write(byte[] b, int off, int len) { updateText(new String(b, off, len)); }
+            private void updateText(String text) {
                 SwingUtilities.invokeLater(() -> {
                     textArea.append(text);
                     textArea.setCaretPosition(textArea.getDocument().getLength());
