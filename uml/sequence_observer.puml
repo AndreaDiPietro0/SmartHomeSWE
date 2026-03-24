@@ -2,37 +2,51 @@
 autonumber
 skinparam sequenceMessageAlign center
 
-actor "Intruso" as Intruso
+skinparam NoteBackgroundColor #FEFECE
+skinparam NoteBorderColor #A80036
+skinparam sequence {
+    ArrowColor #444444
+    LifeLineBorderColor #444444
+    LifeLineBackgroundColor #E1F5FE
+    ParticipantBorderColor #444444
+    ParticipantBackgroundColor #FFFDE7
+}
+
+actor "Ambiente" as Intruso
 participant "sensore: MotionSensor" as Sensore
+participant "event: SensorEvent" as Evento
 participant "sirena: AlarmSystem" as Sirena
 participant "app: MobileApp" as App
 participant "cam: SmartCamera" as Cam
 
-Intruso -> Sensore : Movimento fisico
+Intruso -> Sensore : Movimento
 activate Sensore
 
 Sensore -> Sensore : detectIntruder()
 activate Sensore
 
-Sensore -> Sensore : notifyObservers("Intrusione Rilevata")
+note right of Sensore : creazione oggetto evento
+Sensore -> Evento ** : new SensorEvent(...)
+
+Sensore -> Sensore : notifyObservers(event)
 activate Sensore
 
-note over Sensore, App : Iterazione sulla lista observers
+note over Sensore, App : Iterazione sulla lista SensorObserver<SensorEvent>
 loop per ogni observer in observers
 
-    Sensore -> Sirena : update("Intrusione rilevata")
+    Sensore -> Sirena : update(event)
     activate Sirena
     note right of Sirena : Suona l'allarme
     Sirena --> Sensore : void
     deactivate Sirena
 
-    Sensore -> App : update("Intrusione Rilevata")
+    Sensore -> App : update(event)
     activate App
-    note right of App : Mostra notifica push
+    note right of App : Estrae dati dall'evento\ne mostra notifica push
 
     App -> Cam : getLiveFeed()
     activate Cam
-    Cam --> App : "[REC] Live Feed..."
+    Cam --> App : "[REC]....."
     deactivate Cam
 
     App --> Sensore : void

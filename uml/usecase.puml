@@ -1,24 +1,39 @@
 @startuml
 !pragma layout smetana
-
 left to right direction
-skinparam packageStyle rectangle
 
-' Attori
-actor "Utente\n" as User
+' Stile professionale coerente con il resto della relazione
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor #E1F5FE
+    BorderColor #444444
+    ArrowColor #444444
+}
+skinparam actor {
+    BackgroundColor #FFFDE7
+    BorderColor #444444
+}
+skinparam NoteBackgroundColor #FEFECE
+skinparam NoteBorderColor #A80036
+skinparam TitleFontSize 18
+
+title Diagramma dei casi d'uso
+
+' attori
+actor "Utente" as User
 actor "Ambiente" as Environment
 
 package "Sistema Smart Home" {
 
-    ' sfera composite
+    ' cmposite
     usecase "Gestire casa e stanze" as UC_ManageHouse
     usecase "Interagire con dispositivi smart" as UC_ManageDevices
     usecase "Monitorare consumo energetico" as UC_CheckConsumption
 
-    ' sfera adapter
+    ' adapter
     usecase "Controllare vecchi dispositivi" as UC_ManageOld
 
-    ' sfera observer
+    ' observer
     usecase "Rilevamento intrusione" as UC_Detect
     usecase "Notificare dispositivi iscritti" as UC_Notify
     usecase "Attivare sirena" as UC_SoundAlarm
@@ -26,7 +41,7 @@ package "Sistema Smart Home" {
     usecase "Consultare video telecamera" as UC_LiveFeed
 }
 
-' connessioni attori
+' connessioni attori ->sistema
 User --> UC_ManageHouse
 User --> UC_ManageDevices
 User --> UC_CheckConsumption
@@ -34,20 +49,19 @@ User --> UC_LiveFeed
 
 Environment --> UC_Detect
 
-'relazione tra i casi d'uso
-
-' il controllo della casa include anche il controllo dei singoli dispositivi
+' relazoini tra i casi d'uso
+' controllo casa include controllo dei singoli dispositivi
 UC_ManageHouse ..> UC_ManageDevices : <<include>>
 
-' il controllo dei dispositivi legacy è un'estensione del controllo standard
-UC_ManageDevices <.. UC_ManageOld : <<extend>>
+' controllo dei dispositivi vecchi è un'estensione del controllo standard
+UC_ManageOld .up.> UC_ManageDevices : <<extend>>
 
-' Effetto catena dell'emergenza (Observer)
+' catena eventi observer
 UC_Detect ..> UC_Notify : <<include>>
 UC_Notify ..> UC_SoundAlarm : <<include>>
 UC_Notify ..> UC_AppAlert : <<include>>
 
-' la notifica push porta l'utente ad aprire la telecamera
+' notifica push---> utente apre la telecamera
 UC_AppAlert ..> UC_LiveFeed : <<include>>
 
 @enduml

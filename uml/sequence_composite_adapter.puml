@@ -3,6 +3,16 @@ autonumber
 skinparam maxMessageSize 150
 skinparam sequenceMessageAlign center
 
+skinparam NoteBackgroundColor #FEFECE
+skinparam NoteBorderColor #A80036
+skinparam sequence {
+    ArrowColor #444444
+    LifeLineBorderColor #444444
+    LifeLineBackgroundColor #E1F5FE
+    ParticipantBorderColor #444444
+    ParticipantBackgroundColor #E8F5E9
+}
+
 actor Utente as U
 participant "miaApp: MobileApp" as App
 participant "miaVilla: House" as H
@@ -16,7 +26,7 @@ activate App
 
 App -> H : activate()
 activate H
-note right of H : attivazione a cascata
+note right of H : Propagazione a cascata\n(composite)
 
 H -> R : activate()
 activate R
@@ -28,7 +38,7 @@ deactivate L
 
 R -> Adp : activate()
 activate Adp
-note right of Adp : traduzione comando\nper il vecchio dispositivo
+note right of Adp : Traduzione comando\n(adapter)
 
 Adp -> TV : powerOn()
 activate TV

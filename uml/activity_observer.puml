@@ -1,27 +1,39 @@
 @startuml
-title Rilevamento intruso (Observer Pattern)
+title Rilevamento intruso (Observer)
+
+skinparam ActivityBackgroundColor #E8F5E9
+skinparam ActivityBorderColor #444444
+skinparam ActivityDiamondBackgroundColor #FFFDE7
+skinparam ActivityDiamondBorderColor #444444
+skinparam ArrowColor #444444
+skinparam NoteBackgroundColor #FEFECE
+skinparam NoteBorderColor #A80036
 
 start
-:Movimento fisico rilevato nell'ambiente;
+:Viene rilevato un movimento;
 
 if (Il **MotionSensor** è attivo?) then (No)
     :Ignora il movimento;
     stop
 else (Sì)
     :Esegue **detectIntruder()**;
-    :Chiama **notifyObservers("Intrusione Rilevata")**;
 
-    note right: notifica a tutti gli iscritti
+    :Istanzia **new SensorEvent(message, location)**;
+    :Chiama **notifyObservers(event)**;
+
+    note right: Il subject itera sulla lista\ndegli observer iscritti
 
     fork
-        ' Ramo dell'AlarmSystem
-        :L'**AlarmSystem** riceve **update()**;
+        ' ramo dell'AlarmSystem
+        :L'**AlarmSystem** riceve **update(event)**;
+        :Legge i dati dell'evento;
         :Imposta **isRinging = true**;
-        :Attiva suono Sirena (Hardware);
+        :Attiva suono sirena;
     fork again
-        ' Ramo della MobileApp
-        :La **MobileApp** riceve **update()**;
-        :Mostra **Notifica Push** all'utente;
+        ' ramo della MobileApp
+        :La **MobileApp** riceve **update(event)**;
+        :Legge i dati dell'evento;
+        :Mostra notifica push all'utente;
         :Richiede il video alla **SmartCamera**\ntramite **getLiveFeed()**;
         :Visualizza il video sullo schermo;
     end fork

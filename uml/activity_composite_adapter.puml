@@ -1,33 +1,37 @@
 @startuml
-skinparam activityShape octagon
-
 title Attivazione della casa (Composite & Adapter)
 
+skinparam ActivityBackgroundColor #E8F5E9
+skinparam ActivityBorderColor #444444
+skinparam ActivityDiamondBackgroundColor #FFFDE7
+skinparam ActivityDiamondBorderColor #444444
+skinparam ArrowColor #444444
+
 start
-:L'Utente preme "Accendi Casa" sulla MobileApp;
-:Chiamata a **House.activate()**;
+:L'utente preme "Accendi tutta la casa" sull'app;
+:**House.activate()**;
 
-while (Ci sono ancora Aree/Stanze nella lista?) is (Sì)
+while (Ci sono ancora aree/stanze nella lista?) is (Si)
     :Estrai la prossima **Room**;
-    :Chiamata a **Room.activate()**;
+    :**Room.activate()**;
 
-    while (Ci sono ancora Dispositivi nella lista della Stanza?) is (Sì)
+    while (Ci sono ancora dispositivi nella lista della stanza?) is (Si)
         :Estrai il prossimo **SmartDevice**;
 
-        if (Che tipo di implementazione è?) then (Foglia standard)
-            :Esegui **activate()** nativo;
-            :Imposta **isOn = true**;
+        if (Che tipo di nodo è?) then (Standard)
+            :Esegui **activate()** standard;
+            :Imposta stato interno (es. **isOn = true**);
         else (Adapter)
-            :Esegui **activate()** dell'Adapter;
-            :L'Adapter traduce il comando;
-            :Esegui **powerOn()** o **playMusic()**\nsul dispositivo obsoleto;
+            :Esegui **activate()** dell'adapter;
+            :L'adapter traduce il comando;
+            :Esegui metodo obsoleto\n(es. **powerOn()** o **playMusic()**);
         endif
 
     endwhile (No)
 
 endwhile (No)
 
-:Ritorna il controllo alla MobileApp;
+:Ritorna il controllo all'app;
 :Aggiorna l'interfaccia utente;
 stop
 @enduml

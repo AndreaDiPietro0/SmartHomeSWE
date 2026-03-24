@@ -2,7 +2,7 @@
 !pragma layout smetana
 skinparam classAttributeIconSize 0
 
-' Composite e adapter
+' composite e adapter
 package "Composite & Adapter Patterns" <<Rectangle>> {
 
     interface SmartDevice {
@@ -10,6 +10,7 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
         + deactivate() : void
         + getConsumption() : double
     }
+    note left #81C784: **Component**\ninterfaccia comune per\ntutta la gerarchia.
 
    class LightBulb {
        - baseConsumption : double
@@ -19,6 +20,7 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
        + deactivate() : void
        + getConsumption() : double
    }
+   note bottom #E8F5E9: **Leaf**\ndispositivo smart.
 
     class Thermostat {
         - baseConsumption : double
@@ -28,6 +30,7 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
         + deactivate() : void
         + getConsumption() : double
     }
+    note bottom #E8F5E9: **Leaf**\ndispositivo smart
 
     class SmartCamera {
             - location : String
@@ -39,6 +42,7 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
             + getConsumption() : double
             + getLiveFeed() : String
         }
+    note bottom #E8F5E9: **Leaf**\nmostra il video\nagli observer.
 
     class Room {
         - name : String
@@ -49,21 +53,25 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
         + deactivate() : void
         + getConsumption() : double
     }
+    note top #A5D6A7: **Composite**\ncontenitore di dispositivi.
 
     class House {
         - name : String
-        - areas : List<SmartDevice>
+        - devices : List<SmartDevice>
         + House(name: String)
-        + addArea(area: SmartDevice) : void
+        + addDevice(device: SmartDevice) : void
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
     }
+    note left #A5D6A7: **Root / Composite**\nradice della gerarchia\ndella casa.
 
     class OldSpeaker {
         + playMusic() : void
         + stopMusic() : void
     }
+        note top: **Adaptee**\ndispositivo obsoleto con\ninterfaccia incompatibile.
+
 
     class OldSpeakerAdapter {
             - oldSpeaker : OldSpeaker
@@ -74,11 +82,13 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
             + deactivate() : void
             + getConsumption() : double
         }
+    note bottom #FFE082: **Adapter**\nadatta OldSpeaker\na SmartDevice.
 
     class OldTV {
         + powerOn() : void
         + powerOff() : void
     }
+    note top: **Adaptee**\ndispositivo obsoleto con\ninterfaccia incompatibile.
 
     class OldTVAdapter {
         - oldTV : OldTV
@@ -89,6 +99,7 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
         + deactivate() : void
         + getConsumption() : double
     }
+    note bottom #FFE082: **Adapter**\nAdatta OldTV\na SmartDevice.
 
     ' relazioni composite
     SmartDevice <|.. LightBulb
@@ -110,9 +121,19 @@ package "Composite & Adapter Patterns" <<Rectangle>> {
 ' observer e sensore che fa da ponte
 package "Observer Pattern" <<Rectangle>> {
 
-    interface SensorObserver {
-        + update(event: String) : void
+    interface "SensorObserver<T>" as SensorObserver {
+        + update(event: T) : void
     }
+    note top #B3E5FC: **Observer Interface**
+
+    class SensorEvent {
+        - message : String
+        - location : String
+        + SensorEvent(message: String, location: String)
+        + getMessage() : String
+        + getLocation() : String
+    }
+    note right #E1F5FE: **Contenuto dell'evento**
 
     class MobileApp {
         - securityCam : SmartCamera
@@ -120,49 +141,45 @@ package "Observer Pattern" <<Rectangle>> {
         + turnOn(device: SmartDevice, name: String) : void
         + turnOff(device: SmartDevice, name: String) : void
         + checkConsumption(device: SmartDevice, name: String) : void
-        + update(event: String) : void
+        + update(event: SensorEvent) : void
     }
+    note right #E1F5FE: **Concrete observer & Client**\ngestisce notifiche e\ncontrolla i dispositivi.
 
     class AlarmSystem {
         - isRinging : boolean
-        + update(event: String) : void
+        + update(event: SensorEvent) : void
         + isRinging() : boolean
     }
+    note bottom #E1F5FE: **Concrete Observer**
 
     class MotionSensor {
         - location : String
-        - observers : List<SensorObserver>
+        - observers : List<SensorObserver<SensorEvent>>
         - isActive : boolean
         - powerDraw : double
-        - notifyObservers(event: String) : void
+        - notifyObservers(event: SensorEvent) : void
         + MotionSensor(location: String)
         + activate() : void
         + deactivate() : void
         + getConsumption() : double
-        + attach(o: SensorObserver) : void
-        + detach(o: SensorObserver) : void
+        + attach(o: SensorObserver<SensorEvent>) : void
+        + detach(o: SensorObserver<SensorEvent>) : void
         + detectIntruder() : void
     }
-
-    ' MotionSensor fa da ponte tra i pattern, è sia SmartDevice nel composite che subject nell'observer
-    SmartDevice <|.. MotionSensor
+    note left #FFFFFF: Unione tra i pattern\ncomposite e observer.
+    note left #E8F5E9: **Leaf**
+    note left #90CAF9: **Subject**
 
     ' relazioni observer
+    SmartDevice <|.. MotionSensor
     SensorObserver <|.. MobileApp
     SensorObserver <|.. AlarmSystem
     MotionSensor o--> SensorObserver : notifies
+    MotionSensor ..> SensorEvent : creates
 
     ' connessioni della MobileApp
     MobileApp --> SmartCamera : gets feed from
     MobileApp ..> SmartDevice : controls
 }
-
-' note
-note bottom of House : "radice del composite"
-note bottom of LightBulb : "foglia"
-note bottom of OldSpeakerAdapter : "adapter"
-note bottom of OldTVAdapter : "adapter"
-note top of MotionSensor : "subject & foglia"
-note right of MobileApp : "Observer & Client\n(interagisce con i dispositivi)"
 
 @enduml
