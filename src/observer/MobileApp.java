@@ -4,15 +4,13 @@ import core.SmartCamera;
 import core.SmartDevice;
 
 // app sul telefono del proprietario, concrete observer
-
-public class MobileApp implements SensorObserver {
+public class MobileApp implements SensorObserver<SensorEvent> {
     private SmartCamera securityCam;
 
     public MobileApp(SmartCamera securityCam) {
         this.securityCam = securityCam;
     }
 
-    //metodi per controllare la casa usando il composite
     public void turnOn(SmartDevice device, String name) {
         System.out.println("\n[APP] Invio comando di ACCENSIONE a: " + name);
         device.activate();
@@ -28,10 +26,10 @@ public class MobileApp implements SensorObserver {
         System.out.println("\n[APP] Consumo attuale di [" + name + "]: " + power + " Watt");
     }
 
-    //metodo dell'observer
+    // metodo dell'observer che ora riceve SensorEvent
     @Override
-    public void update(String event) {
-        System.out.println("[NOTIFICA PUSH APP] ALLARME RICEVUTO: " + event);
+    public void update(SensorEvent event) {
+        System.out.println("[NOTIFICA PUSH APP] ALLARME RICEVUTO: " + event.getMessage() + " presso " + event.getLocation());
         System.out.println("[APP] Apertura del video di sicurezza...");
         System.out.println(securityCam.getLiveFeed()); // interroga la telecamera
     }

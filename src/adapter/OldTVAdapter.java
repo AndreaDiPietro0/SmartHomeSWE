@@ -28,6 +28,7 @@ public class OldTVAdapter implements SmartDevice {
 
     @Override
     public double getConsumption() {
+
         return isOn ? powerDraw : 0.0;
     }
 }

@@ -24,6 +24,7 @@ public class LightBulb implements SmartDevice {
 
     @Override
     public double getConsumption() {
+
         return isOn ? baseConsumption : 0.0;
     }
 }

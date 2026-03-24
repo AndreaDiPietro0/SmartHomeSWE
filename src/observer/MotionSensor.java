@@ -1,9 +1,7 @@
 package observer;
 
+//il sensore gestisce una lista di SensorObserver<SensorEvent> e crea l'oggetto evento quando c'è un intrusione
 import core.SmartDevice;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,14 +10,13 @@ public class MotionSensor implements SmartDevice {
     private boolean isActive = false;
     private double powerDraw = 2.0;
 
-    // lista degli observer (app, allarme)
-    private List<SensorObserver> observers = new ArrayList<>();
+    // lista degli observer tipizzata sull'oggetto SensorEvent
+    private List<SensorObserver<SensorEvent>> observers = new ArrayList<>();
 
     public MotionSensor(String location) {
         this.location = location;
     }
 
-    //metodi da smartDevice, composite
     @Override
     public void activate() {
         isActive = true;
@@ -37,28 +34,30 @@ public class MotionSensor implements SmartDevice {
         return isActive ? powerDraw : 0.0;
     }
 
-    //metodi per gli oibserver
-    public void attach(SensorObserver o) {
+    // metodi per gli observer aggiornati con il generico SensorEvent
+    public void attach(SensorObserver<SensorEvent> o) {
         observers.add(o);
     }
 
-    public void detach(SensorObserver o) {
+    public void detach(SensorObserver<SensorEvent> o) {
         observers.remove(o);
     }
 
-    private void notifyObservers(String event) {
-        for (SensorObserver o : observers) {
-            o.update(event); // Avvisa tutti gli iscritti!
+    // passa l'oggetto SensorEvent invece che la stringa
+    private void notifyObservers(SensorEvent event) {
+        for (SensorObserver<SensorEvent> o : observers) {
+            o.update(event);
         }
     }
 
-    // simula movimenti
     public void detectIntruder() {
         if (isActive) {
             System.out.println("\n[Sensore - " + location + "] RILEVATO MOVIMENTO SOSPETTO");
-            notifyObservers("Intruso rilevato presso: " + location);
+            // impacchetta l'evento
+            SensorEvent event = new SensorEvent("Intruso rilevato", location);
+            notifyObservers(event);
         } else {
-            System.out.println("\n[Sensore- " + location + "] (Movimento rilevato, ma sensore disattivato. Nessun allarme).");
+            System.out.println("\n[Sensore - " + location + "] (Movimento rilevato, ma sensore disattivato. Nessun allarme).");
         }
     }
 }
