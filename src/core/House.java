@@ -7,39 +7,39 @@ import java.util.List;
 
 public class House implements SmartDevice {
     private String name;
-    private List<SmartDevice> areas;
+    private List<SmartDevice> devices;
 
     public House(String name) {
         this.name = name;
-        this.areas = new ArrayList<>();
+        this.devices = new ArrayList<>();
     }
 
     // può aggiungere una room ma anche un solo SmartDevice
-    public void addArea(SmartDevice area) {
-        areas.add(area);
+    public void addDevices(SmartDevice device) {
+        devices.add(device);
     }
 
     @Override
     public void activate() {
         System.out.println("\n[" + name + "] - Attivazione totale -");
-        for (SmartDevice area : areas) {
-            area.activate();
+        for (SmartDevice device : devices) {
+            device.activate();
         }
     }
 
     @Override
     public void deactivate() {
         System.out.println("\n[" + name + "] - Disattivazione totale -");
-        for (SmartDevice area : areas) {
-            area.deactivate();
+        for (SmartDevice device : devices) {
+            device.deactivate();
         }
     }
 
     @Override
     public double getConsumption() {
         double totalConsumption = 0.0;
-        for (SmartDevice area : areas) {
-            totalConsumption += area.getConsumption();
+        for (SmartDevice device : devices) {
+            totalConsumption += device.getConsumption();
         }
         return totalConsumption;
     }

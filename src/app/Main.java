@@ -42,8 +42,8 @@ public class Main {
         corridoio.addDevice(sensoreIngresso);
 
         House miaVilla = new House("Villa smart");
-        miaVilla.addArea(salotto);
-        miaVilla.addArea(corridoio);
+        miaVilla.addDevices(salotto);
+        miaVilla.addDevices(corridoio);
 
         System.out.println("Configurazione completata\n");
 

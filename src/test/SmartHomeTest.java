@@ -49,9 +49,9 @@ public class SmartHomeTest {
         giardino.addDevice(sensore);
 
         miaCasa = new House("Villa smart");
-        miaCasa.addArea(salotto);
-        miaCasa.addArea(giardino);
-        miaCasa.addArea(termostato); // il termostato è collegato direttamente alla casa
+        miaCasa.addDevices(salotto);
+        miaCasa.addDevices(giardino);
+        miaCasa.addDevices(termostato); // il termostato è collegato direttamente alla casa
     }
 
     // 1. Test foglie

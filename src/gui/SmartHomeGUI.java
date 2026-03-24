@@ -175,7 +175,7 @@ public class SmartHomeGUI {
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
         Room room = new Room(nomeStanza.substring(nomeStanza.indexOf(" ") + 1));
-        house.addArea(room);
+        house.addDevices(room);
 
         JToggleButton btnStanza = new JToggleButton("OFF - " + nomeStanza);
         customizeButton(btnStanza, new Color(70, 70, 70), 16);
