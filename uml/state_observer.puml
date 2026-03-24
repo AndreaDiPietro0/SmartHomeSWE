@@ -1,0 +1,40 @@
+@startuml
+title Diagramma degli stati: ciclo di vita del sistema di allarme
+!pragma layout smetana
+
+skinparam state {
+    BackgroundColor #E8F5E9
+    BorderColor #444444
+    ArrowColor #444444
+}
+skinparam state<</*stato di emergenza*/>> {
+    BackgroundColor #FFCDD2
+}
+
+[*] --> Disarmato : Inizializzazione
+
+state Disarmato {
+  Disarmato : isRinging = false
+  Disarmato : I sensori ignorano i movimenti
+}
+
+state Armato {
+  Armato : isRinging = false
+  Armato : Sensori in ascolto
+}
+
+state "Allarme attivo " as Allarme <<stato di emergenza>> {
+  Allarme : isRinging = true
+  Allarme : Sirena attivata
+  Allarme : App notificata
+}
+
+Disarmato --> Armato : activate()
+Armato ---> Disarmato : deactivate()
+Armato --> Allarme : update(SensorEvent) [Intruso rilevato]
+Allarme --> Disarmato : deactivate()
+
+Allarme --> [*]
+Disarmato --> [*] : Spegnimento\nsistema
+
+@enduml

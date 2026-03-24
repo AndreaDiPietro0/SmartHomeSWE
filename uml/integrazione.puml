@@ -1,0 +1,61 @@
+@startuml
+!pragma layout smetana
+
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #444444
+skinparam NoteBackgroundColor #FEFECE
+skinparam NoteBorderColor #A80036
+skinparam TitleFontSize 18
+
+title Diagramma di integrazione
+
+package "Livello 1: Interfaccia" #E1F5FE {
+    [Dashboard] as GUI
+    [MobileApp] as App
+    GUI -[hidden]right-> App
+}
+
+package "Livello 2: Logica (Patterns)" #FFFDE7 {
+    [Composite] as Composite
+    [Adapters] as Adapter
+    [Observer] as Observer
+    component "SensorEvent" as Event <<Event Data>>
+
+    Composite -[hidden]right-> Adapter
+    Adapter -[hidden]right-> Observer
+}
+
+package "Livello 3: Dispositivi " #E8F5E9 {
+    [Smart devices] as Smart
+    [Old devices] as Old
+    [Motion Sensors] as Sensors
+
+    Smart -[hidden]right-> Old
+    Old -[hidden]right-> Sensors
+}
+
+Composite -[hidden]down-> Smart
+
+' comandi top-down
+GUI --> Composite : "1. Esegue comando"
+
+Composite --> Smart : "2a. Propaga"
+Composite --> Adapter : "2b. Invia a dispositivi vecchi"
+Adapter --> Old : "3. Traduce comando"
+
+' flusso bottom-up
+Sensors -up-> Observer : "A. Rileva movimento"
+Observer .right.> Event : "B. Incapsula dati"
+Observer -up-> App : "C. Notifica"
+App -up-> GUI : "D. Aggiorna grafica"
+
+note bottom of Observer
+  **Ponte tra i pattern**:
+  Il MotionSensor fa da
+  foglia (composite) e
+  da subject (observer).
+end note
+
+@enduml

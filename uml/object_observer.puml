@@ -1,0 +1,56 @@
+@startuml
+title Diagramma degli Oggetti: Istanza del pattern composite
+!pragma layout smetana
+
+skinparam object {
+    BackgroundColor #E1F5FE
+    BorderColor #444444
+    ArrowColor #444444
+}
+skinparam NoteBackgroundColor #FEFECE
+
+object "miaVilla : House" as House {
+    name = "Villa Smart"
+}
+
+object "salotto : Room" as Salotto {
+    name = "Salotto principale"
+}
+
+object "cucina : Room" as Cucina {
+    name = "Cucina"
+}
+
+object "luceSalotto : LightBulb" as Luce {
+    isOn = true
+    baseConsumption = 10.0
+}
+
+object "tvAdapter : OldTVAdapter" as Adapter {
+    isOn = true
+}
+
+object "vecchiaTV : OldTV" as OldTV {
+    isPowered = true
+}
+
+object "termostato : Thermostat" as Termostato {
+    isOn = true
+    baseConsumption = 45.0
+}
+
+' rel copmosite
+House *-- Salotto
+House *-- Cucina
+
+Salotto *-- Luce
+Salotto *-- Adapter
+Cucina *-- Termostato
+
+' rel adapter
+Adapter --> OldTV : adatta
+
+note right of House: radice (root)
+note right of Salotto: nodi intermedi (composite)
+note bottom of Luce: nodi foglia (leaf)
+@enduml
