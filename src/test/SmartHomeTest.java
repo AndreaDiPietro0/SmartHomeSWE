@@ -14,7 +14,7 @@ public class SmartHomeTest {
 
     private House miaCasa;
     private Room salotto;
-    private Room giardino;
+    private Room ingresso;
     private SmartDevice luce;
     private Thermostat termostato;
     private SmartCamera telecamera;
@@ -30,7 +30,7 @@ public class SmartHomeTest {
         // inizializzo tutti i componenti
         luce = new LightBulb(10.0);
         termostato = new Thermostat(1500.0);
-        telecamera = new SmartCamera("Giardino");
+        telecamera = new SmartCamera("Ingresso");
 
         tvAdapter = new OldTVAdapter(new OldTV());
         stereoAdapter = new OldSpeakerAdapter(new OldSpeaker());
@@ -44,13 +44,13 @@ public class SmartHomeTest {
         salotto.addDevice(luce);
         salotto.addDevice(tvAdapter);
 
-        giardino = new Room("Giardino");
-        giardino.addDevice(telecamera);
-        giardino.addDevice(sensore);
+        ingresso = new Room("Ingresso");
+        ingresso.addDevice(telecamera);
+        ingresso.addDevice(sensore);
 
         miaCasa = new House("Villa smart");
         miaCasa.addDevices(salotto);
-        miaCasa.addDevices(giardino);
+        miaCasa.addDevices(ingresso);
         miaCasa.addDevices(termostato); // il termostato è collegato direttamente alla casa
     }
 
@@ -67,7 +67,7 @@ public class SmartHomeTest {
         // verifico lo stato acceso
         assertEquals(15.0, telecamera.getConsumption(), 0.01, "La telecamera accesa consuma 15W");
         assertTrue(telecamera.getLiveFeed().contains("[REC]"));
-        assertTrue(telecamera.getLiveFeed().contains("Giardino"));
+        assertTrue(telecamera.getLiveFeed().contains("Ingresso"));
     }
 
     // 2. Test adapter
@@ -91,7 +91,7 @@ public class SmartHomeTest {
 
         // consumo totale atteso:
         // salotto: llampadina 10 + TV 120 = 130
-        // giardino: telecamera15 + sensore2 = 17
+        // ingresso: telecamera15 + sensore2 = 17
         // casa: termostato1500
         // tot = 130 + 17 + 1500 = 1647.0
 
