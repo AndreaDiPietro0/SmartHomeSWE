@@ -2,8 +2,7 @@ package core;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// radice nel modello composite, rappresenta la casa che può contenere più aree e/o stanze.
+//radice nel modello composite, nodo contenitore, rappresenta la casa che può contenere più stanze.
 
 public class House implements SmartDevice {
     private String name;

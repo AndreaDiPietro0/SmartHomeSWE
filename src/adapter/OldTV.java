@@ -1,5 +1,5 @@
 package adapter;
-
+//adaptee
 public class OldTV {
     public void powerOn() {
         System.out.println("[OldTV] Vecchia tv ACCESA...");

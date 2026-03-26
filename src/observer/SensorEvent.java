@@ -1,6 +1,7 @@
 package observer;
 
-// nuovo oggetto evento che contiene tutte le informazioni su cosa accade
+// nuovo oggetto evento che incapsula le informazioni dell'evento
+// modello push, il subject invia i dati all'observer
 public class SensorEvent {
     private String message;
     private String location;

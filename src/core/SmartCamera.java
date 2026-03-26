@@ -1,4 +1,5 @@
 package core;
+//copmonente foglia
 
 public class SmartCamera implements SmartDevice {
     private String location;

@@ -1,5 +1,5 @@
 package core;
-
+//composite, nodo contenitore
 import java.util.ArrayList;
 import java.util.List;
 

@@ -165,7 +165,7 @@ public class SmartHomeGUI {
         sensor.attach(app);
         sensor.attach(sirena);
     }
-
+    //crea grafica e funzionamento interno
     private JPanel createRoomPanel(String nomeStanza, Object[][] dispositiviInfo) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -253,7 +253,7 @@ public class SmartHomeGUI {
                 (isAnyDeviceOn ? "ON - " : "OFF - ") + nStanza,
                 isAnyDeviceOn ? new Color(46, 204, 113) : new Color(70, 70, 70));
 
-        checkHouseState(); // Propaga l'aggiornamento alla casa
+        checkHouseState(); // propaga l'aggiornamento alla casa
     }
 
     // controlla se almeno una stanza è accesa

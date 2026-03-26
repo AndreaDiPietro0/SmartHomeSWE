@@ -26,7 +26,7 @@ public class Thermostat implements SmartDevice {
 
     @Override
     public double getConsumption() {
-        // consuma energia solo se è acceso
+        // se isOn è true, restituisce il consumo, sennò restituisce 0
         return isOn ? baseConsumption : 0.0;
     }
 }

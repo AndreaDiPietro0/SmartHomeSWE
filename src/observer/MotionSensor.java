@@ -1,5 +1,5 @@
 package observer;
-
+//concrete subject
 //il sensore gestisce una lista di SensorObserver<SensorEvent> e crea l'oggetto evento quando c'è un intrusione
 import core.SmartDevice;
 import java.util.ArrayList;
@@ -10,13 +10,14 @@ public class MotionSensor implements SmartDevice {
     private boolean isActive = false;
     private double powerDraw = 2.0;
 
-    // lista degli observer tipizzata sull'oggetto SensorEvent
+    // lista degli observer, contniene un SensorEvent generico
     private List<SensorObserver<SensorEvent>> observers = new ArrayList<>();
 
     public MotionSensor(String location) {
         this.location = location;
     }
 
+    //metodi di iscrizione e disiscrizione
     @Override
     public void activate() {
         isActive = true;
