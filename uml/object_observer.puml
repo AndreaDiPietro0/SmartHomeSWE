@@ -31,7 +31,6 @@ object "tvAdapter : OldTVAdapter" as Adapter {
 }
 
 object "vecchiaTV : OldTV" as OldTV {
-    isPowered = true
 }
 
 object "termostato : Thermostat" as Termostato {

@@ -15,7 +15,7 @@ skinparam sequence {
 
 actor Utente as U
 participant "miaApp: MobileApp" as App
-participant "miaVilla: House" as H
+participant "miaCasa: House" as H
 participant "salotto: Room" as R
 participant "luce: LightBulb" as L
 participant "tvAdapter: OldTVAdapter" as Adp
