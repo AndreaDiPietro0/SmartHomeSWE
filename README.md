@@ -1,6 +1,6 @@
 # Smart Home
 
-University project for [Software Engineering], [Univeristy of Florence].
+University project for Software Engineering, Univeristy of Florence.
 
 A smart-home system modelled and implemented in Java. It combines three design patterns and is documented with a full set of UML diagrams.
 
